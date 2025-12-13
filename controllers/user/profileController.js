@@ -5,7 +5,7 @@ import {
   findProfileById,
   updateProfile,
   deleteProfile
-} from "../../models/user/profile.js";
+} from "../../models/user/Profile.js";
 
 // GET: all profiles with user info
 export const getProfilesHandler = (req, res) => {
