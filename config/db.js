@@ -1,11 +1,24 @@
 import mysql from "mysql2/promise";
 
+// Railway uses these environment variables
+const {
+  MYSQLHOST,
+  MYSQLPORT,
+  MYSQLUSER,
+  MYSQLPASSWORD,
+  MYSQLDATABASE,
+} = process.env;
+
+if (!MYSQLHOST || !MYSQLPORT || !MYSQLUSER || !MYSQLPASSWORD || !MYSQLDATABASE) {
+  throw new Error("❌ MySQL environment variables are not properly set!");
+}
+
 export const pool = mysql.createPool({
-  host: process.env.MYSQLHOST,             // Railway MySQL host
-  user: process.env.MYSQLUSER,             // Railway MySQL user
-  password: process.env.MYSQLPASSWORD,     // Railway MySQL password
-  database: process.env.MYSQL_DATABASE,    // Railway MySQL database
-  port: Number(process.env.MYSQLPORT),     // Railway MySQL port
+  host: MYSQLHOST,
+  port: Number(MYSQLPORT),
+  user: MYSQLUSER,
+  password: MYSQLPASSWORD,
+  database: MYSQLDATABASE,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -14,7 +27,7 @@ export const pool = mysql.createPool({
 export const connectDB = async () => {
   try {
     const conn = await pool.getConnection();
-    await conn.ping();    // check connection
+    await conn.ping();
     conn.release();
     console.log("✅ MySQL Connected Successfully");
   } catch (error) {
