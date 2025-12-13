@@ -1,7 +1,3 @@
-// ---------------------- LOAD ENV -----------------------
-// import dotenv from "dotenv";
-// dotenv.config();
-
 // ---------------------- CORE IMPORTS -------------------
 import express from "express";
 import cors from "cors";
@@ -73,7 +69,7 @@ import dashboardRoutes from "./routes/institute/dashboardRoute.js";
 
 // ---------------------- APP SETUP -----------------------
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
@@ -87,11 +83,16 @@ app.get("/", (_req, res) => {
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
 
+  // ---------- DATABASE CONNECTION ----------
   try {
     await connectDB();
-    console.log("✅ MySQL connected");
+    console.log("✅ MySQL Connected Successfully");
+  } catch (err) {
+    console.error("⚠️ MySQL connection warning:", err.message);
+  }
 
-    // ---------- ADMIN TABLES ----------
+  // ---------- ADMIN TABLES ----------
+  try {
     await ensureCourseTableExists();
     await ensureFinancialTableExists();
     await ensureInstituteTableExists();
@@ -100,8 +101,13 @@ app.listen(PORT, async () => {
     await ensureSettingTableExists();
     await ensureUserTableExists();
     await ensureAdminTableExists();
+    console.log("✅ Admin tables ready");
+  } catch (err) {
+    console.error("⚠️ Admin table setup issue:", err.message);
+  }
 
-    // ---------- INSTITUTE TABLES ----------
+  // ---------- INSTITUTE TABLES ----------
+  try {
     await ensureDepartmentTableExists();
     await ensureStudentTableExists();
     await ensureFacultyTableExists();
@@ -110,8 +116,13 @@ app.listen(PORT, async () => {
     await ensureEventTableExists();
     await ensureInstituteProfileTableExists();
     await ensureReportsTableExists();
+    console.log("✅ Institute tables ready");
+  } catch (err) {
+    console.error("⚠️ Institute table setup issue:", err.message);
+  }
 
-    // ---------- USER TABLES ----------
+  // ---------- USER TABLES ----------
+  try {
     await ensureUsersIDsTableExists();
     await ensureu_UserTableExists();
     await ensureProfileTableExists();
@@ -121,11 +132,12 @@ app.listen(PORT, async () => {
     await ensureDonationTableExists();
     await ensurePlacementTableExists();
     await ensureResearchTableExists();
-
-    console.log("✅ All ERP tables verified/created successfully!");
+    console.log("✅ User tables ready");
   } catch (err) {
-    console.error("❌ Startup error:", err.message);
+    console.error("⚠️ User table setup issue:", err.message);
   }
+
+  console.log("🎉 Server startup completed successfully");
 });
 
 // ---------------------- ADMIN ROUTES --------------------
