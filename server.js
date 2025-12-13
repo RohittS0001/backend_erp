@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 // ---------------------- CORE IMPORTS -------------------
 import express from "express";
 import cors from "cors";
