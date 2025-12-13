@@ -1,13 +1,14 @@
 import mysql from "mysql2/promise";
 
 export const pool = mysql.createPool({
-  host: process.env.MYSQLHOST,        // ✅ no underscore
+  host: process.env.MYSQLHOST,
   user: process.env.MYSQLUSER,
   password: process.env.MYSQLPASSWORD,
   database: process.env.MYSQLDATABASE,
-  port: Number(process.env.MYSQLPORT),
+  port: process.env.MYSQLPORT,
   waitForConnections: true,
   connectionLimit: 10,
+  queueLimit: 0,
 });
 
 export const connectDB = async () => {
@@ -18,5 +19,6 @@ export const connectDB = async () => {
     console.log("✅ MySQL Connected Successfully");
   } catch (error) {
     console.error("❌ MySQL Connection Error:", error.message);
+    throw error;
   }
 };
