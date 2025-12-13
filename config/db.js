@@ -1,15 +1,11 @@
 import mysql from "mysql2/promise";
-import { parse } from "url";
-
-// Parse Railway MYSQL_URL
-const dbUrl = new URL(process.env.MYSQL_URL);
 
 export const pool = mysql.createPool({
-  host: dbUrl.hostname,
-  user: dbUrl.username,
-  password: dbUrl.password,
-  database: dbUrl.pathname.replace("/", ""),
-  port: Number(dbUrl.port),
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: Number(process.env.MYSQLPORT),
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
