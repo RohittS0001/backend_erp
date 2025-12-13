@@ -1,6 +1,5 @@
 import mysql from "mysql2/promise";
 
-// Destructure Railway environment variables
 const {
   MYSQLHOST,
   MYSQLPORT,
@@ -9,12 +8,12 @@ const {
   MYSQLDATABASE,
 } = process.env;
 
-// Check if any required variable is missing
+// Safety check
 if (!MYSQLHOST || !MYSQLPORT || !MYSQLUSER || !MYSQLPASSWORD || !MYSQLDATABASE) {
   throw new Error("❌ MySQL environment variables are not properly set!");
 }
 
-// Create MySQL pool
+// Create pool
 export const pool = mysql.createPool({
   host: MYSQLHOST,
   port: Number(MYSQLPORT),
