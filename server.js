@@ -13,17 +13,6 @@ import { ensureSettingTableExists } from "./models/admin/Setting.js";
 import { ensureUserTableExists } from "./models/admin/User.js";
 import { ensureAdminTableExists } from "./models/adminmodels.js";
 
-// ---------------------- ADMIN ROUTES -------------------
-import adminRoutes from "./routes/adminRoutes.js";
-import aCoursesRoutes from "./routes/admin/a_coursesRoutes.js";
-import aDashboardRoutes from "./routes/admin/a_dashboardRoutes.js";
-import aFinancialsRoutes from "./routes/admin/a_financialsRoutes.js";
-import aInstitutesRoutes from "./routes/admin/a_institutesRoutes.js";
-import aNotificationsRoutes from "./routes/admin/a_notificationsRoutes.js";
-import aReportsRoutes from "./routes/admin/a_reportsRoutes.js";
-import aSettingsRoutes from "./routes/admin/a_settingsRoutes.js";
-import aUsersRoutes from "./routes/admin/a_usersRoutes.js";
-
 // ---------------------- USER TABLES --------------------
 import { ensureu_UserTableExists } from "./models/user/UserDashboard.js";
 import { ensureUsersIDsTableExists } from "./models/usermodels.js";
@@ -35,16 +24,6 @@ import { ensureDonationTableExists } from "./models/user/Donation.js";
 import { ensurePlacementTableExists } from "./models/user/Placement.js";
 import { ensureResearchTableExists } from "./models/user/Research.js";
 
-// ---------------------- USER ROUTES --------------------
-import userRoutes from "./routes/userRoutes.js";
-import UprofileRoutes from "./routes/user/U_profileRoutes.js";
-import membershipRoutes from "./routes/user/membershipRoutes.js";
-import immersionRoutes from "./routes/user/immersionRoutes.js";
-import mouRoutes from "./routes/user/mouRoutes.js";
-import donationRoutes from "./routes/user/donationRoutes.js";
-import placementRoutes from "./routes/user/placementRoutes.js";
-import researchRoutes from "./routes/user/researchRoutes.js";
-
 // ---------------------- INSTITUTE TABLES ----------------
 import { ensureDepartmentTableExists } from "./models/institute/department.js";
 import { ensureStudentTableExists } from "./models/institute/Student.js";
@@ -55,7 +34,26 @@ import { ensureEventTableExists } from "./models/institute/Event.js";
 import { ensureProfileTableExists as ensureInstituteProfileTableExists } from "./models/institute/profile.js";
 import { ensureReportsTableExists } from "./models/institute/Report.js";
 
-// ---------------------- INSTITUTE ROUTES ----------------
+// ---------------------- ROUTES -------------------------
+import adminRoutes from "./routes/adminRoutes.js";
+import aCoursesRoutes from "./routes/admin/a_coursesRoutes.js";
+import aDashboardRoutes from "./routes/admin/a_dashboardRoutes.js";
+import aFinancialsRoutes from "./routes/admin/a_financialsRoutes.js";
+import aInstitutesRoutes from "./routes/admin/a_institutesRoutes.js";
+import aNotificationsRoutes from "./routes/admin/a_notificationsRoutes.js";
+import aReportsRoutes from "./routes/admin/a_reportsRoutes.js";
+import aSettingsRoutes from "./routes/admin/a_settingsRoutes.js";
+import aUsersRoutes from "./routes/admin/a_usersRoutes.js";
+
+import userRoutes from "./routes/userRoutes.js";
+import UprofileRoutes from "./routes/user/U_profileRoutes.js";
+import membershipRoutes from "./routes/user/membershipRoutes.js";
+import immersionRoutes from "./routes/user/immersionRoutes.js";
+import mouRoutes from "./routes/user/mouRoutes.js";
+import donationRoutes from "./routes/user/donationRoutes.js";
+import placementRoutes from "./routes/user/placementRoutes.js";
+import researchRoutes from "./routes/user/researchRoutes.js";
+
 import departmentRoutes from "./routes/institute/departmentRoute.js";
 import studentRoutes from "./routes/institute/studentmanagementRoute.js";
 import facultyRoutes from "./routes/institute/facultyRoute.js";
@@ -83,64 +81,58 @@ app.get("/", (_req, res) => {
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
 
-  // ---------- DATABASE CONNECTION ----------
+  // ---- DB CONNECTION (SAFE) ----
   try {
     await connectDB();
-    console.log("✅ MySQL Connected Successfully");
-  } catch (err) {
-    console.error("⚠️ MySQL connection warning:", err.message);
+  } catch {
+    console.log("⚠️ DB warning – continuing startup");
   }
 
-  // ---------- ADMIN TABLES ----------
-  try {
-    await ensureCourseTableExists();
-    await ensureFinancialTableExists();
-    await ensureInstituteTableExists();
-    await ensureNotificationTableExists();
-    await ensureReportTableExists();
-    await ensureSettingTableExists();
-    await ensureUserTableExists();
-    await ensureAdminTableExists();
-    console.log("✅ Admin tables ready");
-  } catch (err) {
-    console.error("⚠️ Admin table setup issue:", err.message);
-  }
+  // ---- TABLE CREATION (NON-BLOCKING) ----
+  const safe = async (fn, name) => {
+    try {
+      await fn();
+      console.log(`✅ ${name}`);
+    } catch (e) {
+      console.log(`⚠️ ${name} skipped`);
+    }
+  };
 
-  // ---------- INSTITUTE TABLES ----------
-  try {
-    await ensureDepartmentTableExists();
-    await ensureStudentTableExists();
-    await ensureFacultyTableExists();
-    await ensureInstituteCourseTable();
-    await ensureAttendanceTable();
-    await ensureEventTableExists();
-    await ensureInstituteProfileTableExists();
-    await ensureReportsTableExists();
-    console.log("✅ Institute tables ready");
-  } catch (err) {
-    console.error("⚠️ Institute table setup issue:", err.message);
-  }
+  // ADMIN
+  await safe(ensureCourseTableExists, "Admin Course table");
+  await safe(ensureFinancialTableExists, "Admin Financial table");
+  await safe(ensureInstituteTableExists, "Admin Institute table");
+  await safe(ensureNotificationTableExists, "Admin Notification table");
+  await safe(ensureReportTableExists, "Admin Report table");
+  await safe(ensureSettingTableExists, "Admin Setting table");
+  await safe(ensureUserTableExists, "Admin User table");
+  await safe(ensureAdminTableExists, "Admin Admin table");
 
-  // ---------- USER TABLES ----------
-  try {
-    await ensureUsersIDsTableExists();
-    await ensureu_UserTableExists();
-    await ensureProfileTableExists();
-    await ensureMembershipTableExists();
-    await ensureImmersionTableExists();
-    await ensureMOUTableExists();
-    await ensureDonationTableExists();
-    await ensurePlacementTableExists();
-    await ensureResearchTableExists();
-    console.log("✅ User tables ready");
-  } catch (err) {
-    console.error("⚠️ User table setup issue:", err.message);
-  }
+  // INSTITUTE
+  await safe(ensureDepartmentTableExists, "Institute Department table");
+  await safe(ensureStudentTableExists, "Institute Student table");
+  await safe(ensureFacultyTableExists, "Institute Faculty table");
+  await safe(ensureInstituteCourseTable, "Institute Course table");
+  await safe(ensureAttendanceTable, "Institute Attendance table");
+  await safe(ensureEventTableExists, "Institute Event table");
+  await safe(ensureInstituteProfileTableExists, "Institute Profile table");
+  await safe(ensureReportsTableExists, "Institute Reports table");
+
+  // USER
+  await safe(ensureUsersIDsTableExists, "User IDs table");
+  await safe(ensureu_UserTableExists, "User Dashboard table");
+  await safe(ensureProfileTableExists, "User Profile table");
+  await safe(ensureMembershipTableExists, "User Membership table");
+  await safe(ensureImmersionTableExists, "User Immersion table");
+  await safe(ensureMOUTableExists, "User MOU table");
+  await safe(ensureDonationTableExists, "User Donation table");
+  await safe(ensurePlacementTableExists, "User Placement table");
+  await safe(ensureResearchTableExists, "User Research table");
 
   console.log("🎉 Server startup completed successfully");
 });
 
-// ---------------------- ADMIN ROUTES --------------------
+// ---------------------- ROUTES -------------------------
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/institutes", aInstitutesRoutes);
 app.use("/api/admin/financials", aFinancialsRoutes);
@@ -151,7 +143,6 @@ app.use("/api/admin/reports", aReportsRoutes);
 app.use("/api/admin/dashboard", aDashboardRoutes);
 app.use("/api/admin/courses", aCoursesRoutes);
 
-// ---------------------- INSTITUTE ROUTES ----------------
 app.use("/api/institute/departments", departmentRoutes);
 app.use("/api/institute/students", studentRoutes);
 app.use("/api/institute/faculty", facultyRoutes);
@@ -163,7 +154,6 @@ app.use("/api/institute/notifications", notificationRoutes);
 app.use("/api/institute/reports", reportRoutes);
 app.use("/api/institute/dashboard", dashboardRoutes);
 
-// ---------------------- USER ROUTES ---------------------
 app.use("/api/users", userRoutes);
 app.use("/api/user/profile", UprofileRoutes);
 app.use("/api/user/membership", membershipRoutes);
