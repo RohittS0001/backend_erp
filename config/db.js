@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise";
 
 export const pool = mysql.createPool({
-  uri: process.env.MYSQL_URL,   // ✅ Railway official way
+  uri: process.env.MYSQL_URL, // Railway automatically injects the INTERNAL one
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
