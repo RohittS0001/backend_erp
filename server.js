@@ -31,7 +31,7 @@ import aUsersRoutes from "./routes/admin/a_usersRoutes.js";
 // ---------------------- USER TABLES --------------------
 import { ensureu_UserTableExists } from "./models/user/UserDashboard.js";
 import { ensureUsersIDsTableExists } from "./models/usermodels.js";
-import { ensureProfileTableExists } from "./models/user/profile.js";
+import { ensureProfileTableExists } from "./models/user/Profile.js";
 import { ensureMembershipTableExists } from "./models/user/Membership.js";
 import { ensureImmersionTableExists } from "./models/user/Immersion.js";
 import { ensureMOUTableExists } from "./models/user/MOU.js";
