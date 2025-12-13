@@ -1,6 +1,6 @@
 // ---------------------- LOAD ENV -----------------------
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
 
 // ---------------------- CORE IMPORTS -------------------
 import express from "express";
