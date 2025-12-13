@@ -81,24 +81,26 @@ app.get("/", (_req, res) => {
 app.listen(PORT, async () => {
   console.log(`🚀 Server running on port ${PORT}`);
 
-  // ---- DB CONNECTION (SAFE) ----
+  // ---- DB CONNECTION (RAILWAY SAFE) ----
   try {
     await connectDB();
-  } catch {
+    console.log("✅ MySQL Connected Successfully");
+  } catch (err) {
+    console.log("❌ MySQL Connection Error:", err.message);
     console.log("⚠️ DB warning – continuing startup");
   }
 
-  // ---- TABLE CREATION (NON-BLOCKING) ----
+  // ---- TABLE CREATION (SAFE) ----
   const safe = async (fn, name) => {
     try {
       await fn();
       console.log(`✅ ${name}`);
-    } catch (e) {
+    } catch {
       console.log(`⚠️ ${name} skipped`);
     }
   };
 
-  // ADMIN
+  // ADMIN TABLES
   await safe(ensureCourseTableExists, "Admin Course table");
   await safe(ensureFinancialTableExists, "Admin Financial table");
   await safe(ensureInstituteTableExists, "Admin Institute table");
@@ -108,7 +110,7 @@ app.listen(PORT, async () => {
   await safe(ensureUserTableExists, "Admin User table");
   await safe(ensureAdminTableExists, "Admin Admin table");
 
-  // INSTITUTE
+  // INSTITUTE TABLES
   await safe(ensureDepartmentTableExists, "Institute Department table");
   await safe(ensureStudentTableExists, "Institute Student table");
   await safe(ensureFacultyTableExists, "Institute Faculty table");
@@ -118,7 +120,7 @@ app.listen(PORT, async () => {
   await safe(ensureInstituteProfileTableExists, "Institute Profile table");
   await safe(ensureReportsTableExists, "Institute Reports table");
 
-  // USER
+  // USER TABLES
   await safe(ensureUsersIDsTableExists, "User IDs table");
   await safe(ensureu_UserTableExists, "User Dashboard table");
   await safe(ensureProfileTableExists, "User Profile table");
