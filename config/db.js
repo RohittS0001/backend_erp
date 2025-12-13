@@ -2,11 +2,11 @@ import mysql from "mysql2/promise";
 
 // Create MySQL connection pool (Railway variables)
 export const pool = mysql.createPool({
-  host: process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database: process.env.MYSQLDATABASE,
-  port: Number(process.env.MYSQLPORT || 3306),
+  host:"mysql.railway.internal",
+  user:"root",
+  password: "trJmYrszBDVhPDSQUaYCcdkQhmESoDWZ",
+  database: "railway",
+  port: "3306",
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
