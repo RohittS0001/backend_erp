@@ -54,7 +54,7 @@ import { ensureDepartmentTableExists } from "./models/institute/department.js";
 import { ensureStudentTableExists } from "./models/institute/Student.js";
 import { ensureFacultyTableExists } from "./models/institute/Faculty.js";
 import { ensureCourseTableExists as ensureInstituteCourseTable } from "./models/institute/Course.js";
-import { ensureAttendanceTable } from "./models/institute/Attendance.js";
+import { ensureAttendanceTable } from "./models/institute/attendance.js";
 import { ensureEventTableExists } from "./models/institute/Event.js";
 import { ensureProfileTableExists as ensureInstituteProfileTableExists } from "./models/institute/profile.js";
 import { ensureReportsTableExists } from "./models/institute/Report.js";
