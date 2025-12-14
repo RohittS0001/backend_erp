@@ -4,6 +4,9 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 
+
+
+
 // ---------------------- ADMIN TABLES -------------------
 import { ensureCourseTableExists } from "./models/admin/Course.js";
 import { ensureFinancialTableExists } from "./models/admin/Financial.js";
@@ -69,6 +72,13 @@ import dashboardRoutes from "./routes/institute/dashboardRoute.js";
 // ---------------------- APP SETUP -----------------------
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+app.use(cors({
+  origin: "*",   // allow all (safe for learning / demo)
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 
 app.use(cors());
 app.use(express.json());
