@@ -73,8 +73,12 @@ import dashboardRoutes from "./routes/institute/dashboardRoute.js";
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+
 app.use(cors({
-  origin: "*",   // allow all (safe for learning / demo)
+  origin: [
+    "https://sahfon.org",
+    "https://www.sahfon.org"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
