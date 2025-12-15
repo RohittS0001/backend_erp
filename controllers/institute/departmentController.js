@@ -1,47 +1,22 @@
-import {
-  addDepartment,
-  getDepartments,
-  updateDepartment,
-  deleteDepartment,
-  countDepartments
-} from "../../models/institute/department.js";
+import { sequelize } from "../../config/db.js";
+import Department from "../../models/institute/Department.js";
 
-// CREATE Department
-export const createDepartment = async (req, res) => {
+// Add department
+export const addDepartment = async (req, res) => {
   try {
-    const id = await addDepartment(req.body);
-    res.json({ success: true, message: "Department created", id });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    const department = await Department.create(req.body);
+    res.json({ success: true, department });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// GET all departments
-export const fetchDepartments = async (req, res) => {
+// Get all departments
+export const getDepartments = async (req, res) => {
   try {
-    const departments = await getDepartments();
-    res.json(departments);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// UPDATE department
-export const editDepartment = async (req, res) => {
-  try {
-    await updateDepartment(req.params.id, req.body);
-    res.json({ success: true, message: "Department updated" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// DELETE department
-export const removeDepartment = async (req, res) => {
-  try {
-    await deleteDepartment(req.params.id);
-    res.json({ success: true, message: "Department deleted" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    const list = await Department.findAll();
+    res.json(list);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
