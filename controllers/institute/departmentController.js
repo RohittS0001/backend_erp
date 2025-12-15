@@ -1,5 +1,5 @@
 import { sequelize } from "../../config/db.js";
-import Department from "../../models/institute/Department.js";
+import Department from "../../models/institute/department.js";
 
 // Add department
 export const addDepartment = async (req, res) => {
