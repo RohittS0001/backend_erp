@@ -48,7 +48,7 @@ import aUsersRoutes from "./routes/admin/a_usersRoutes.js";
 
 import userRoutes from "./routes/userRoutes.js";
 import UprofileRoutes from "./routes/user/U_profileRoutes.js";
-import membershipRoutes from "./routes/user/membership.js";
+import membershipRoutes from "./routes/user/membershipRoutes.js";
 import immersionRoutes from "./routes/user/immersionRoutes.js";
 import mouRoutes from "./routes/user/mouRoutes.js";
 import donationRoutes from "./routes/user/donationRoutes.js";
