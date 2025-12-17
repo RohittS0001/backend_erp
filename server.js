@@ -52,7 +52,7 @@ import membershipRoutes from "./routes/user/membershipRoutes.js";
 import immersionRoutes from "./routes/user/immersionRoutes.js";
 import mouRoutes from "./routes/user/mouRoutes.js";
 import donationRoutes from "./routes/user/donationRoutes.js";
-import placementRoutes from "./routes/user/placement.js";
+import placementRoutes from "./routes/user/placementRoutes.js";
 import researchRoutes from "./routes/user/researchRoutes.js";
 
 import instituteRoutes from "./routes/instituteRoutes.js";
