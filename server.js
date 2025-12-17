@@ -1,16 +1,12 @@
-
 // ---------------------- CORE IMPORTS -------------------
 import express from "express";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 
-
-
-
 // ---------------------- ADMIN TABLES -------------------
 import { ensureCourseTableExists } from "./models/admin/Course.js";
 import { ensureFinancialTableExists } from "./models/admin/Financial.js";
-import { ensureInstituteTableExists } from "./models/admin/Institute.js";
+import { ensureInstituteTableExists as ensureAdminInstituteTable } from "./models/admin/Institute.js";
 import { ensureNotificationTableExists } from "./models/admin/Notification.js";
 import { ensureReportTableExists } from "./models/admin/Report.js";
 import { ensureSettingTableExists } from "./models/admin/Setting.js";
@@ -18,8 +14,8 @@ import { ensureUserTableExists } from "./models/admin/User.js";
 import { ensureAdminTableExists } from "./models/adminmodels.js";
 
 // ---------------------- USER TABLES --------------------
-import { ensureu_UserTableExists } from "./models/user/UserDashboard.js";
 import { ensureUsersIDsTableExists } from "./models/usermodels.js";
+import { ensureu_UserTableExists } from "./models/user/UserDashboard.js";
 import { ensureProfileTableExists } from "./models/user/Profile.js";
 import { ensureMembershipTableExists } from "./models/user/Membership.js";
 import { ensureImmersionTableExists } from "./models/user/Immersion.js";
@@ -29,6 +25,7 @@ import { ensurePlacementTableExists } from "./models/user/Placement.js";
 import { ensureResearchTableExists } from "./models/user/Research.js";
 
 // ---------------------- INSTITUTE TABLES ----------------
+import { ensureInstituteTableExists } from "./models/institutemodels.js"; // new institute table
 import { ensureDepartmentTableExists } from "./models/institute/department.js";
 import { ensureStudentTableExists } from "./models/institute/Student.js";
 import { ensureFacultyTableExists } from "./models/institute/Faculty.js";
@@ -51,13 +48,14 @@ import aUsersRoutes from "./routes/admin/a_usersRoutes.js";
 
 import userRoutes from "./routes/userRoutes.js";
 import UprofileRoutes from "./routes/user/U_profileRoutes.js";
-import membershipRoutes from "./routes/user/membershipRoutes.js";
+import membershipRoutes from "./routes/user/membership.js";
 import immersionRoutes from "./routes/user/immersionRoutes.js";
 import mouRoutes from "./routes/user/mouRoutes.js";
 import donationRoutes from "./routes/user/donationRoutes.js";
-import placementRoutes from "./routes/user/placementRoutes.js";
+import placementRoutes from "./routes/user/placement.js";
 import researchRoutes from "./routes/user/researchRoutes.js";
 
+import instituteRoutes from "./routes/instituteRoutes.js";
 import departmentRoutes from "./routes/institute/departmentRoute.js";
 import studentRoutes from "./routes/institute/studentmanagementRoute.js";
 import facultyRoutes from "./routes/institute/facultyRoute.js";
@@ -73,7 +71,6 @@ import dashboardRoutes from "./routes/institute/dashboardRoute.js";
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-
 app.use(cors({
   origin: [
     "https://sahfon.org",
@@ -83,8 +80,6 @@ app.use(cors({
   credentials: true
 }));
 
-
-// app.use(cors());
 app.use(express.json());
 
 // ---------------------- HEALTH CHECK --------------------
@@ -110,15 +105,15 @@ app.listen(PORT, async () => {
     try {
       await fn();
       console.log(`✅ ${name}`);
-    } catch {
-      console.log(`⚠️ ${name} skipped`);
+    } catch (err) {
+      console.log(`⚠️ ${name} skipped:`, err.message);
     }
   };
 
   // ADMIN TABLES
   await safe(ensureCourseTableExists, "Admin Course table");
   await safe(ensureFinancialTableExists, "Admin Financial table");
-  await safe(ensureInstituteTableExists, "Admin Institute table");
+  await safe(ensureAdminInstituteTable, "Admin Institute table");
   await safe(ensureNotificationTableExists, "Admin Notification table");
   await safe(ensureReportTableExists, "Admin Report table");
   await safe(ensureSettingTableExists, "Admin Setting table");
@@ -126,6 +121,7 @@ app.listen(PORT, async () => {
   await safe(ensureAdminTableExists, "Admin Admin table");
 
   // INSTITUTE TABLES
+  await safe(ensureInstituteTableExists, "Institute table");
   await safe(ensureDepartmentTableExists, "Institute Department table");
   await safe(ensureStudentTableExists, "Institute Student table");
   await safe(ensureFacultyTableExists, "Institute Faculty table");
@@ -150,6 +146,7 @@ app.listen(PORT, async () => {
 });
 
 // ---------------------- ROUTES -------------------------
+// ADMIN
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/institutes", aInstitutesRoutes);
 app.use("/api/admin/financials", aFinancialsRoutes);
@@ -160,6 +157,7 @@ app.use("/api/admin/reports", aReportsRoutes);
 app.use("/api/admin/dashboard", aDashboardRoutes);
 app.use("/api/admin/courses", aCoursesRoutes);
 
+// INSTITUTE
 app.use("/api/institute/departments", departmentRoutes);
 app.use("/api/institute/students", studentRoutes);
 app.use("/api/institute/faculty", facultyRoutes);
@@ -170,7 +168,9 @@ app.use("/api/institute/profile", profileRoutes);
 app.use("/api/institute/notifications", notificationRoutes);
 app.use("/api/institute/reports", reportRoutes);
 app.use("/api/institute/dashboard", dashboardRoutes);
+app.use("/api/institute", instituteRoutes); // new institute routes
 
+// USER
 app.use("/api/users", userRoutes);
 app.use("/api/user/profile", UprofileRoutes);
 app.use("/api/user/membership", membershipRoutes);

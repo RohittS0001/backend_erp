@@ -1,21 +1,19 @@
 import express from "express";
 import {
-  registerInstitute,
-  loginInstitute,
-  getInstituteDashboard
+  getInstitutesHandler,
+  getInstituteHandler,
+  createInstituteHandler,
+  updateInstituteHandler,
+  deleteInstituteHandler
 } from "../controllers/instituteController.js";
 
 const router = express.Router();
 
-// ======================================================
-// 📌 AUTH ROUTES
-// ======================================================
-router.post("/register", registerInstitute); // ✅ ADDED
-router.post("/login", loginInstitute);       // ✅ ADDED
-
-// ======================================================
-// 📌 DASHBOARD
-// ======================================================
-router.get("/dashboard", getInstituteDashboard);
+// CRUD routes for institutes
+router.get("/", getInstitutesHandler);
+router.get("/:id", getInstituteHandler);
+router.post("/", createInstituteHandler);
+router.put("/:id", updateInstituteHandler);
+router.delete("/:id", deleteInstituteHandler);
 
 export default router;
