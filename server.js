@@ -79,7 +79,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-
+app.use(cors());
 app.use(express.json());
 
 // ---------------------- HEALTH CHECK --------------------
@@ -95,7 +95,7 @@ app.listen(PORT, async () => {
   try {
     await connectDB();
     console.log("✅ MySQL Connected Successfully");
-  } catch (err) {
+  } catch (err){
     console.log("❌ MySQL Connection Error:", err.message);
     console.log("⚠️ DB warning – continuing startup");
   }
@@ -104,9 +104,9 @@ app.listen(PORT, async () => {
   const safe = async (fn, name) => {
     try {
       await fn();
-      console.log(`✅ ${name}`);
-    } catch (err) {
-      console.log(`⚠️ ${name} skipped:`, err.message);
+      console.log("✅ ${name}");
+    } catch {
+      console.log("⚠️ ${name} skipped");
     }
   };
 
@@ -179,3 +179,7 @@ app.use("/api/user/mou", mouRoutes);
 app.use("/api/user/donation", donationRoutes);
 app.use("/api/user/placement", placementRoutes);
 app.use("/api/user/research", researchRoutes);
+
+
+
+//
