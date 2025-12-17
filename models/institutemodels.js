@@ -3,7 +3,7 @@ import { pool } from "../config/db.js";
 // CREATE TABLE IF NOT EXISTS for Institutes
 export async function ensureInstituteTableExists() {
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS Institutes (
+    CREATE TABLE IF NOT EXISTS InstitutesID (
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       address VARCHAR(255),
