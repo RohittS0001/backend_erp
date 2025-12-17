@@ -4,7 +4,7 @@
 import {
   createInstituteRecord,
   findInstituteByEmail
-} from "../models/institutemodel.js"; //ksjdkb
+} from "../models/institutemodels.js"; //ksjdkb
 
 import {
   countStudents,

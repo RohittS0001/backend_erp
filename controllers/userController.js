@@ -4,7 +4,7 @@ import {
   createUser,
   getUserByEmail,
   getAllUsers,
-} from "../models/usermodel.js";  //jneuigf
+} from "../models/usermodels.js";  //jneuigf
 
 // Register user
 export const registerUser = async (req, res) => {
