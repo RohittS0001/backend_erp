@@ -1,20 +1,21 @@
 import express from "express";
 import {
-  getInstituteDashboard,
-  getInstituteProfile,
-  updateInstituteProfile
+  registerInstitute,
+  loginInstitute,
+  getInstituteDashboard
 } from "../controllers/instituteController.js";
 
 const router = express.Router();
 
-// 📌 Dashboard Summary API
+// ======================================================
+// 📌 AUTH ROUTES
+// ======================================================
+router.post("/register", registerInstitute); // ✅ ADDED
+router.post("/login", loginInstitute);       // ✅ ADDED
+
+// ======================================================
+// 📌 DASHBOARD
+// ======================================================
 router.get("/dashboard", getInstituteDashboard);
 
-// 📌 Get Institute Profile
-router.get("/profile", getInstituteProfile);
-
-// 📌 Update Institute Profile
-router.put("/profile/update", updateInstituteProfile);
-
 export default router;
- 

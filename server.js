@@ -84,7 +84,7 @@ app.use(cors({
 }));
 
 
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 // ---------------------- HEALTH CHECK --------------------
@@ -136,7 +136,7 @@ app.listen(PORT, async () => {
   await safe(ensureReportsTableExists, "Institute Reports table");
 
   // USER TABLES
-  await safe(ensureUsersIDsTableExists, "User IDs table");
+  await safe(ensureUsersIDsTableExists, "User table");
   await safe(ensureu_UserTableExists, "User Dashboard table");
   await safe(ensureProfileTableExists, "User Profile table");
   await safe(ensureMembershipTableExists, "User Membership table");

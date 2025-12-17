@@ -1,19 +1,32 @@
-import InstituteRecord from "../models/instituteModel.js";
-import Student from "../models/Student.js";
-import Faculty from "../models/Faculty.js";
-import Course from "../models/Course.js";
-import Department from "../models/Department.js";
-import Profile from "../models/Profile.js";
+// ---------------- IMPORT MODEL FUNCTIONS ----------------
+// ❌ REMOVED Sequelize models
+// ✅ USING MySQL model functions instead
+import {
+  createInstituteRecord,
+  findInstituteByEmail
+} from "../models/instituteModel.js";
+
+import {
+  countStudents,
+  countFaculty,
+  countCourses,
+  countDepartments
+} from "../models/instituteDashboardModel.js"; 
+// 👆 you can keep counts separate (clean architecture)
 
 // ======================================================
-// 📌 1. Register a New Institute
+// 📌 1. Register Institute
 // ======================================================
 export const registerInstitute = async (req, res) => {
   try {
-    const institute = await InstituteRecord.create(req.body);
+    const institute = await createInstituteRecord(req.body);
     res.status(201).json({ success: true, institute });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    // ✅ DUPLICATE EMAIL HANDLING
+    if (error.code === "ER_DUP_ENTRY") {
+      return res.status(400).json({ success: false, message: "Email already exists" });
+    }
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -24,50 +37,19 @@ export const loginInstitute = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const institute = await InstituteRecord.findOne({
-      where: { email }
-    });
+    const institute = await findInstituteByEmail(email);
 
-    if (!institute || institute.password !== password) {
+    // ✅ SAME LOGIN LOGIC AS USER & ADMIN
+    if (!institute || institute.password !== password.trim()) {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
     }
 
-    res.json({ success: true, message: "Login successful", institute });
-
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// ======================================================
-// 📌 3. Get All Institutes
-// ======================================================
-export const getInstitutes = async (req, res) => {
-  try {
-    const institutes = await InstituteRecord.findAll();
-    res.json(institutes);
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
-// ======================================================
-// 📌 4. Institute Dashboard Summary
-// ======================================================
-export const getInstituteDashboard = async (req, res) => {
-  try {
-    const totalStudents = await Student.count();
-    const totalFaculty = await Faculty.count();
-    const totalCourses = await Course.count();
-    const totalDepartments = await Department.count();
-
     res.json({
       success: true,
-      dashboard: {
-        totalStudents,
-        totalFaculty,
-        totalCourses,
-        totalDepartments
+      message: "Login successful",
+      institute: {
+        id: institute.id,
+        email: institute.email
       }
     });
 
@@ -77,31 +59,18 @@ export const getInstituteDashboard = async (req, res) => {
 };
 
 // ======================================================
-// 📌 5. Get Institute Profile (Single Record)
+// 📌 3. Institute Dashboard Summary
 // ======================================================
-export const getInstituteProfile = async (req, res) => {
+export const getInstituteDashboard = async (_req, res) => {
   try {
-    const profile = await Profile.findOne();
-    res.json(profile);
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+    const dashboard = {
+      totalStudents: await countStudents(),
+      totalFaculty: await countFaculty(),
+      totalCourses: await countCourses(),
+      totalDepartments: await countDepartments()
+    };
 
-// ======================================================
-// 📌 6. Update Institute Profile
-// ======================================================
-export const updateInstituteProfile = async (req, res) => {
-  try {
-    let profile = await Profile.findOne();
-
-    if (!profile) {
-      profile = await Profile.create(req.body);
-    } else {
-      await profile.update(req.body);
-    }
-
-    res.json({ success: true, profile });
+    res.json({ success: true, dashboard });
 
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

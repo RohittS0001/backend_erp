@@ -1,22 +1,43 @@
-import { createUser, findUserByEmail, getUsers as getAllUsers } from "../models/usermodels.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import {
+  createUser,
+  getUserByEmail,
+  getAllUsers,
+} from "../models/userModel.js";
 
-
-// Register new user
+// Register user
 export const registerUser = async (req, res) => {
   try {
-    const user = await createUser(req.body);
-    res.status(201).json(user);
-  } catch (err) {
-    // Handle duplicate entry error for unique constraints etc
-    if (err.code === "ER_DUP_ENTRY") {
-      return res.status(400).json({ error: "Email or name already exists" });
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password required" });
     }
-    res.status(400).json({ error: err.message });
+
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password.trim(), 10);
+
+    const user = await createUser({
+      email,
+      password: hashedPassword,
+    });
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 };
 
 // Get all users
-export const getUsers = async (req, res) => {
+export const getUsers = async (_req, res) => {
   try {
     const users = await getAllUsers();
     res.json(users);
@@ -28,12 +49,39 @@ export const getUsers = async (req, res) => {
 // User login
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
+
   try {
-    const user = await findUserByEmail(email);
-    if (!user || user.password !== password) {
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password required" });
+    }
+
+    const user = await getUserByEmail(email);
+
+    if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
-    res.json({ message: "Login successful", user });
+
+    const isMatch = await bcrypt.compare(password.trim(), user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    // JWT token
+    const token = jwt.sign(
+      { id: user.id, role: "user" },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
