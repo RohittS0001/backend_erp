@@ -1,7 +1,7 @@
 import { pool } from "../config/db.js";
 
 // Auto-create Users table
-export async function ensureUsersTableExists() {
+export async function ensureUsersIDsTableExists() {
   await pool.query(`
     CREATE TABLE IF NOT EXISTS UsersIDs (
       id INT AUTO_INCREMENT PRIMARY KEY,
