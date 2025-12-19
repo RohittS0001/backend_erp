@@ -157,6 +157,16 @@ app.use("/api/admin/reports", aReportsRoutes);
 app.use("/api/admin/dashboard", aDashboardRoutes);
 app.use("/api/admin/courses", aCoursesRoutes);
 
+// USER
+app.use("/api/user", userRoutes);
+app.use("/api/user/profile", UprofileRoutes);
+app.use("/api/user/membership", membershipRoutes);
+app.use("/api/user/immersion", immersionRoutes);
+app.use("/api/user/mou", mouRoutes);
+app.use("/api/user/donation", donationRoutes);
+app.use("/api/user/placement", placementRoutes);
+app.use("/api/user/research", researchRoutes);
+
 // INSTITUTE
 app.use("/api/institute/departments", departmentRoutes);
 app.use("/api/institute/students", studentRoutes);
@@ -170,16 +180,4 @@ app.use("/api/institute/reports", reportRoutes);
 app.use("/api/institute/dashboard", dashboardRoutes);
 app.use("/api/institute", instituteRoutes); // new institute routes
 
-// USER
-app.use("/api/user", userRoutes);
-app.use("/api/user/profile", UprofileRoutes);
-app.use("/api/user/membership", membershipRoutes);
-app.use("/api/user/immersion", immersionRoutes);
-app.use("/api/user/mou", mouRoutes);
-app.use("/api/user/donation", donationRoutes);
-app.use("/api/user/placement", placementRoutes);
-app.use("/api/user/research", researchRoutes);
 
-
-
-//
