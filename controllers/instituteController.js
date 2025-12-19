@@ -1,13 +1,15 @@
+// controllers/instituteController.js
 import {
   createInstitute,
   getAllInstitutes,
   getInstituteById,
   updateInstituteById,
-  deleteInstituteById
+  deleteInstituteById,
+  getInstituteByEmail
 } from "../models/institutemodels.js";
 
 // GET all institutes
-export const getInstitutesHandler = async (req, res) => {
+export const getInstitutesHandler = async (_req, res) => {
   try {
     const institutes = await getAllInstitutes();
     res.json(institutes);
@@ -54,6 +56,25 @@ export const deleteInstituteHandler = async (req, res) => {
     const success = await deleteInstituteById(req.params.id);
     if (!success) return res.status(404).json({ error: "Institute not found" });
     res.json({ message: "Institute deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// LOGIN institute (similar to user login)
+export const loginInstituteHandler = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const institute = await getInstituteByEmail(email);
+
+    console.log("DB:", institute?.email, "|", institute?.password);
+    console.log("REQ:", email.toLowerCase().trim(), "|", password.trim());
+
+    if (!institute || institute.password !== password.trim()) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    res.json({ message: "Login successful", institute });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

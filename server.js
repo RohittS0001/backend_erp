@@ -171,7 +171,7 @@ app.use("/api/institute/dashboard", dashboardRoutes);
 app.use("/api/institute", instituteRoutes); // new institute routes
 
 // USER
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/user/profile", UprofileRoutes);
 app.use("/api/user/membership", membershipRoutes);
 app.use("/api/user/immersion", immersionRoutes);

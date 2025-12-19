@@ -1,53 +1,58 @@
+// models/institutemodels.js
 import { pool } from "../config/db.js";
 
-// CREATE TABLE IF NOT EXISTS for Institutes
+// Auto-create InstitutesIDs table (for login)
 export async function ensureInstituteTableExists() {
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS InstitutesID (
+    CREATE TABLE IF NOT EXISTS InstitutesIDs (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      address VARCHAR(255),
-      email VARCHAR(255) UNIQUE,
-      phone VARCHAR(50)
+      email VARCHAR(255) NOT NULL UNIQUE,
+      password VARCHAR(255) NOT NULL
     );
   `);
 }
 
-// Get all institutes
+// Get all institutes (login identities)
 export async function getAllInstitutes() {
-  const [rows] = await pool.query('SELECT * FROM Institutes');
+  const [rows] = await pool.query("SELECT * FROM InstitutesIDs");
   return rows;
 }
 
-// Get institute by ID
-export async function getInstituteById(id) {
-  const [rows] = await pool.query('SELECT * FROM Institutes WHERE id = ?', [id]);
+// Get institute by email
+export async function getInstituteByEmail(email) {
+  const [rows] = await pool.query(
+    "SELECT * FROM InstitutesIDs WHERE email = ?",
+    [email.toLowerCase().trim()]
+  );
   return rows[0] || null;
 }
 
-// Create a new institute
+// Create a new institute login
 export async function createInstitute(data) {
-  const { name, address, email, phone } = data;
+  const { email, password } = data;
   const [result] = await pool.query(
-    'INSERT INTO Institutes (name, address, email, phone) VALUES (?, ?, ?, ?)',
-    [name.trim(), address?.trim() || null, email?.toLowerCase().trim() || null, phone || null]
+    "INSERT INTO InstitutesIDs (email, password) VALUES (?, ?)",
+    [email.toLowerCase().trim(), password.trim()]
   );
-  return { id: result.insertId, name, address, email, phone };
+  return { id: result.insertId, email: email.toLowerCase().trim(), password: password.trim() };
 }
 
 // Update institute by ID
 export async function updateInstituteById(id, data) {
-  const { name, address, email, phone } = data;
+  const { email, password } = data;
   const [result] = await pool.query(
-    'UPDATE Institutes SET name = ?, address = ?, email = ?, phone = ? WHERE id = ?',
-    [name.trim(), address?.trim() || null, email?.toLowerCase().trim() || null, phone || null, id]
+    "UPDATE InstitutesIDs SET email = ?, password = ? WHERE id = ?",
+    [email.toLowerCase().trim(), password.trim(), id]
   );
   if (result.affectedRows === 0) return null;
-  return { id, name, address, email, phone };
+  return { id, email: email.toLowerCase().trim(), password: password.trim() };
 }
 
 // Delete institute by ID
 export async function deleteInstituteById(id) {
-  const [result] = await pool.query('DELETE FROM Institutes WHERE id = ?', [id]);
+  const [result] = await pool.query(
+    "DELETE FROM InstitutesIDs WHERE id = ?",
+    [id]
+  );
   return result.affectedRows > 0;
 }
