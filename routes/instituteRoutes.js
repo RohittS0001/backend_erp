@@ -1,19 +1,15 @@
+// routes/instituteRoutes.js
 import express from "express";
 import {
+  registerInstituteHandler,
   getInstitutesHandler,
-  getInstituteHandler,
-  createInstituteHandler,
-  updateInstituteHandler,
-  deleteInstituteHandler
+  loginInstituteHandler
 } from "../controllers/instituteController.js";
 
 const router = express.Router();
 
-// CRUD routes for institutes
+router.post("/register", registerInstituteHandler);
 router.get("/", getInstitutesHandler);
-router.get("/:id", getInstituteHandler);
-router.post("/", createInstituteHandler);
-router.put("/:id", updateInstituteHandler);
-router.delete("/:id", deleteInstituteHandler);
+router.post("/login", loginInstituteHandler);
 
 export default router;

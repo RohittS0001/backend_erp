@@ -168,6 +168,8 @@ app.use("/api/user/placement", placementRoutes);
 app.use("/api/user/research", researchRoutes);
 
 // INSTITUTE
+
+app.use("/api/institute", instituteRoutes);
 app.use("/api/institute/departments", departmentRoutes);
 app.use("/api/institute/students", studentRoutes);
 app.use("/api/institute/faculty", facultyRoutes);
@@ -178,6 +180,5 @@ app.use("/api/institute/profile", profileRoutes);
 app.use("/api/institute/notifications", notificationRoutes);
 app.use("/api/institute/reports", reportRoutes);
 app.use("/api/institute/dashboard", dashboardRoutes);
-app.use("/api/institute", instituteRoutes); // new institute routes
 
 
