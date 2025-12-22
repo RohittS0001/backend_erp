@@ -3,7 +3,7 @@ import { pool } from "../config/db.js";
 // Auto-create Users table
 export async function ensureUsersIDsTableExists() {
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS UsersIDs (
+    CREATE TABLE IF NOT EXISTS UsersID (
       id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(255),
       email VARCHAR(255) NOT NULL UNIQUE,
