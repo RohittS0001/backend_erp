@@ -4,7 +4,7 @@ import {
   getIndustryApplications,
   createAcademicApplication,
   getAcademicApplications
-} from "../models/immersion.js";
+} from "../../models/user/Immersion.js";
 
 // ----- Industry Application -----
 
