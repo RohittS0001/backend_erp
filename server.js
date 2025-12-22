@@ -18,14 +18,15 @@ import { ensureUsersIDsTableExists } from "./models/usermodels.js";
 import { ensureu_UserTableExists } from "./models/user/UserDashboard.js";
 import { ensureProfileTableExists } from "./models/user/Profile.js";
 import { ensureMembershipTableExists } from "./models/user/Membership.js";
-import { ensureImmersionTableExists } from "./models/user/Immersion.js";
+// NEW: updated import name for immersion tables
+import { ensureImmersionTables } from "./models/user/Immersion.js";
 import { ensureMOUTableExists } from "./models/user/MOU.js";
 import { ensureDonationTableExists } from "./models/user/Donation.js";
 import { ensurePlacementTableExists } from "./models/user/Placement.js";
 import { ensureResearchTableExists } from "./models/user/Research.js";
 
 // ---------------------- INSTITUTE TABLES ----------------
-import { ensureInstituteTableExists } from "./models/institutemodels.js"; // new institute table
+import { ensureInstituteTableExists } from "./models/institutemodels.js";
 import { ensureDepartmentTableExists } from "./models/institute/department.js";
 import { ensureStudentTableExists } from "./models/institute/Student.js";
 import { ensureFacultyTableExists } from "./models/institute/Faculty.js";
@@ -71,14 +72,14 @@ import dashboardRoutes from "./routes/institute/dashboardRoute.js";
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(cors({
-  origin: [
-    "https://sahfon.org",
-    "https://www.sahfon.org"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: ["https://sahfon.org", "https://www.sahfon.org"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+  })
+);
+// second cors() is redundant but kept if used elsewhere
 app.use(cors());
 app.use(express.json());
 
@@ -95,7 +96,7 @@ app.listen(PORT, async () => {
   try {
     await connectDB();
     console.log("✅ MySQL Connected Successfully");
-  } catch (err){
+  } catch (err) {
     console.log("❌ MySQL Connection Error:", err.message);
     console.log("⚠️ DB warning – continuing startup");
   }
@@ -104,9 +105,9 @@ app.listen(PORT, async () => {
   const safe = async (fn, name) => {
     try {
       await fn();
-      console.log("✅ ${name}");
-    } catch {
-      console.log("⚠️ ${name} skipped");
+      console.log(`✅ ${name}`);
+    } catch (err) {
+      console.log(`⚠️ ${name} skipped`, err?.message || "");
     }
   };
 
@@ -136,7 +137,7 @@ app.listen(PORT, async () => {
   await safe(ensureu_UserTableExists, "User Dashboard table");
   await safe(ensureProfileTableExists, "User Profile table");
   await safe(ensureMembershipTableExists, "User Membership table");
-  await safe(ensureImmersionTableExists, "User Immersion table");
+  await safe(ensureImmersionTables, "User Immersion tables"); // updated
   await safe(ensureMOUTableExists, "User MOU table");
   await safe(ensureDonationTableExists, "User Donation table");
   await safe(ensurePlacementTableExists, "User Placement table");
@@ -168,7 +169,6 @@ app.use("/api/user/placement", placementRoutes);
 app.use("/api/user/research", researchRoutes);
 
 // INSTITUTE
-
 app.use("/api/institute", instituteRoutes);
 app.use("/api/institute/departments", departmentRoutes);
 app.use("/api/institute/students", studentRoutes);
@@ -180,5 +180,3 @@ app.use("/api/institute/profile", profileRoutes);
 app.use("/api/institute/notifications", notificationRoutes);
 app.use("/api/institute/reports", reportRoutes);
 app.use("/api/institute/dashboard", dashboardRoutes);
-
-
