@@ -1,53 +1,119 @@
+// controllers/immersionController.js
 import {
-  createImmersion,
-  getImmersions,
-  findImmersionById,
-  updateImmersion,
-  deleteImmersion
-} from "../../models/user/Immersion.js";
+  createIndustryApplication,
+  getIndustryApplications,
+  createAcademicApplication,
+  getAcademicApplications
+} from "../models/immersion.js";
 
-// GET: all immersion records
-export const getImmersionsHandler = (req, res) => {
-  getImmersions((err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
-};
+// ----- Industry Application -----
 
-// POST: add immersion record
-export const createImmersionHandler = (req, res) => {
-  createImmersion(req.body, (err, result) => {
-    if (err) return res.status(400).json({ error: err.message });
-    res.status(201).json({ id: result.insertId, ...req.body });
-  });
-};
+export async function addIndustryApplication(req, res) {
+  try {
+    const resumePath = req.file ? req.file.path : null;
 
-// GET: immersion by ID
-export const getImmersionByIdHandler = (req, res) => {
-  findImmersionById(req.params.id, (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (results.length === 0)
-      return res.status(404).json({ error: "Immersion not found" });
-    res.json(results[0]);
-  });
-};
+    const {
+      industryName,
+      industryEmail,
+      industrySkypeId,
+      industryContact,
+      industryLocation,
+      industrySkillsSubjects,
+      industryExperienceLookingFor,
+      industryDescription
+    } = req.body;
 
-// PUT: update immersion
-export const updateImmersionHandler = (req, res) => {
-  updateImmersion(req.params.id, req.body, (err, result) => {
-    if (err) return res.status(400).json({ error: err.message });
-    if (result.affectedRows === 0)
-      return res.status(404).json({ error: "Immersion not found" });
-    res.json({ id: req.params.id, ...req.body });
-  });
-};
+    if (
+      !industryName ||
+      !industryEmail ||
+      !industryContact ||
+      !industryLocation ||
+      !industrySkillsSubjects ||
+      !industryExperienceLookingFor
+    ) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
 
-// DELETE: remove immersion
-export const deleteImmersionHandler = (req, res) => {
-  deleteImmersion(req.params.id, (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (result.affectedRows === 0)
-      return res.status(404).json({ error: "Immersion not found" });
-    res.json({ message: "Immersion deleted" });
-  });
-};
+    const created = await createIndustryApplication({
+      industryName,
+      industryEmail,
+      industrySkypeId,
+      industryContact,
+      industryLocation,
+      industrySkillsSubjects,
+      industryExperienceLookingFor,
+      industryDescription,
+      resumePath
+    });
+
+    res.status(201).json(created);
+  } catch (err) {
+    console.error("Error creating industry application:", err);
+    res.status(500).json({ message: "Failed to create industry application" });
+  }
+}
+
+export async function listIndustryApplications(req, res) {
+  try {
+    const data = await getIndustryApplications();
+    res.json(data);
+  } catch (err) {
+    console.error("Error fetching industry applications:", err);
+    res.status(500).json({ message: "Failed to fetch industry applications" });
+  }
+}
+
+// ----- Academic Application -----
+
+export async function addAcademicApplication(req, res) {
+  try {
+    const {
+      academicName,
+      academicContact,
+      academicEmail,
+      academicLocation,
+      academicPrograms,
+      academicSpecialization,
+      academicSubject,
+      academicSkypeId
+    } = req.body;
+
+    if (
+      !academicName ||
+      !academicContact ||
+      !academicEmail ||
+      !academicLocation ||
+      !academicPrograms ||
+      !academicSpecialization ||
+      !academicSubject
+    ) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const created = await createAcademicApplication({
+      academicName,
+      academicContact,
+      academicEmail,
+      academicLocation,
+      academicPrograms,
+      academicSpecialization,
+      academicSubject,
+      academicSkypeId
+    });
+
+    res.status(201).json(created);
+  } catch (err) {
+    console.error("Error creating academic application:", err);
+    res.status(500).json({ message: "Failed to create academic application" });
+  }
+}
+
+export async function listAcademicApplications(req, res) {
+  try {
+    const data = await getAcademicApplications();
+    res.json(data);
+  } catch (err) {
+    console.error("Error fetching academic applications:", err);
+    res.status(500).json({ message: "Failed to fetch academic applications" });
+  }
+}

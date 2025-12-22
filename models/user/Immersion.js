@@ -1,54 +1,160 @@
-import { pool } from "../../config/db.js"; // Adjust path as needed
+// models/immersion.js
+import { pool } from "../../config/db.js";
 
-// Utility: Ensure Immersion Table Exists (Optional)
-export async function ensureImmersionTableExists() {
+/**
+ * Ensure tables for Industry and Academic applications exist.
+ */
+export async function ensureImmersionTables() {
+  // Industry applying to academic immersion
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS UserImmersion (
+    CREATE TABLE IF NOT EXISTS IndustryApplication (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      program VARCHAR(255) NOT NULL,
-      institution VARCHAR(255) NOT NULL,
-      startDate DATE NOT NULL,
-      endDate DATE NOT NULL,
-      description TEXT,
-      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-      updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      industryName VARCHAR(255) NOT NULL,
+      industryEmail VARCHAR(255) NOT NULL,
+      industrySkypeId VARCHAR(255),
+      industryContact VARCHAR(50) NOT NULL,
+      industryLocation VARCHAR(255) NOT NULL,
+      industrySkillsSubjects TEXT NOT NULL,
+      industryExperienceLookingFor VARCHAR(255) NOT NULL,
+      industryDescription TEXT,
+      resumePath VARCHAR(500),
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
+  // Academic (university / institute) applying to industry immersion
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS AcademicApplication (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      academicName VARCHAR(255) NOT NULL,
+      academicContact VARCHAR(50) NOT NULL,
+      academicEmail VARCHAR(255) NOT NULL,
+      academicLocation VARCHAR(255) NOT NULL,
+      academicPrograms VARCHAR(255) NOT NULL,
+      academicSpecialization VARCHAR(255) NOT NULL,
+      academicSubject VARCHAR(255) NOT NULL,
+      academicSkypeId VARCHAR(255),
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
 }
 
-// Create new immersion record
-export async function createImmersion({ program, institution, startDate, endDate, description }) {
+/* ---------- Industry Application CRUD ---------- */
+
+export async function createIndustryApplication({
+  industryName,
+  industryEmail,
+  industrySkypeId,
+  industryContact,
+  industryLocation,
+  industrySkillsSubjects,
+  industryExperienceLookingFor,
+  industryDescription,
+  resumePath
+}) {
   const [result] = await pool.query(
-    "INSERT INTO UserImmersion (program, institution, startDate, endDate, description) VALUES (?, ?, ?, ?, ?)",
-    [program, institution, startDate, endDate, description]
+    `
+    INSERT INTO IndustryApplication (
+      industryName,
+      industryEmail,
+      industrySkypeId,
+      industryContact,
+      industryLocation,
+      industrySkillsSubjects,
+      industryExperienceLookingFor,
+      industryDescription,
+      resumePath
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      industryName,
+      industryEmail,
+      industrySkypeId,
+      industryContact,
+      industryLocation,
+      industrySkillsSubjects,
+      industryExperienceLookingFor,
+      industryDescription,
+      resumePath || null
+    ]
   );
-  return { id: result.insertId, program, institution, startDate, endDate, description };
+
+  return {
+    id: result.insertId,
+    industryName,
+    industryEmail,
+    industrySkypeId,
+    industryContact,
+    industryLocation,
+    industrySkillsSubjects,
+    industryExperienceLookingFor,
+    industryDescription,
+    resumePath: resumePath || null
+  };
 }
 
-// Get all immersions
-export async function getImmersions() {
-  const [rows] = await pool.query("SELECT * FROM UserImmersion");
+export async function getIndustryApplications() {
+  const [rows] = await pool.query(
+    "SELECT * FROM IndustryApplication ORDER BY createdAt DESC"
+  );
   return rows;
 }
 
-// Get immersion by ID
-export async function findImmersionById(id) {
-  const [rows] = await pool.query("SELECT * FROM UserImmersion WHERE id = ?", [id]);
-  return rows[0];
-}
+/* ---------- Academic Application CRUD ---------- */
 
-// Update immersion by ID
-export async function updateImmersion(id, { program, institution, startDate, endDate, description }) {
+export async function createAcademicApplication({
+  academicName,
+  academicContact,
+  academicEmail,
+  academicLocation,
+  academicPrograms,
+  academicSpecialization,
+  academicSubject,
+  academicSkypeId
+}) {
   const [result] = await pool.query(
-    "UPDATE UserImmersion SET program=?, institution=?, startDate=?, endDate=?, description=? WHERE id=?",
-    [program, institution, startDate, endDate, description, id]
+    `
+    INSERT INTO AcademicApplication (
+      academicName,
+      academicContact,
+      academicEmail,
+      academicLocation,
+      academicPrograms,
+      academicSpecialization,
+      academicSubject,
+      academicSkypeId
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `,
+    [
+      academicName,
+      academicContact,
+      academicEmail,
+      academicLocation,
+      academicPrograms,
+      academicSpecialization,
+      academicSubject,
+      academicSkypeId
+    ]
   );
-  if (result.affectedRows === 0) return null;
-  return { id, program, institution, startDate, endDate, description };
+
+  return {
+    id: result.insertId,
+    academicName,
+    academicContact,
+    academicEmail,
+    academicLocation,
+    academicPrograms,
+    academicSpecialization,
+    academicSubject,
+    academicSkypeId
+  };
 }
 
-// Delete immersion by ID
-export async function deleteImmersion(id) {
-  const [result] = await pool.query("DELETE FROM UserImmersion WHERE id = ?", [id]);
-  return result.affectedRows > 0;
+export async function getAcademicApplications() {
+  const [rows] = await pool.query(
+    "SELECT * FROM AcademicApplication ORDER BY createdAt DESC"
+  );
+  return rows;
 }

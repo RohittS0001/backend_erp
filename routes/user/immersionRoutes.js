@@ -1,19 +1,30 @@
+// routes/immersionRoutes.js
 import express from "express";
+import multer from "multer";
 import {
-  getImmersionsHandler,
-  createImmersionHandler,
-  getImmersionByIdHandler,
-  updateImmersionHandler,
-  deleteImmersionHandler
-} from "../../controllers/user/immersionController.js";
+  addIndustryApplication,
+  listIndustryApplications,
+  addAcademicApplication,
+  listAcademicApplications
+} from "../controllers/immersionController.js";
 
 const router = express.Router();
 
-router.get("/", getImmersionsHandler);
-router.post("/", createImmersionHandler);
+// Multer for resume uploads
+const upload = multer({
+  dest: "uploads/resumes/"
+});
 
-router.get("/:id", getImmersionByIdHandler);
-router.put("/:id", updateImmersionHandler);
-router.delete("/:id", deleteImmersionHandler);
+// Industry Application
+router.get("/immersion/industry-applications", listIndustryApplications);
+router.post(
+  "/immersion/industry-applications",
+  upload.single("industryResume"),
+  addIndustryApplication
+);
+
+// Academic Application
+router.get("/immersion/academic-applications", listAcademicApplications);
+router.post("/immersion/academic-applications", addAcademicApplication);
 
 export default router;
