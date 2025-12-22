@@ -6,7 +6,7 @@ import {
   listIndustryApplications,
   addAcademicApplication,
   listAcademicApplications
-} from "../../controllers/immersionController.js";
+} from "../../controllers/user/immersionController.js";
 
 const router = express.Router();
 
