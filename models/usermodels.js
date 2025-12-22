@@ -9,7 +9,7 @@ export async function ensureUsersIDsTableExists() {
       email VARCHAR(255) NOT NULL UNIQUE,
       password VARCHAR(255) NOT NULL,
       phone VARCHAR(20),
-      role ENUM('admin', 'user', 'institute') NOT NULL DEFAULT 'user'
+      role ENUM('user', 'institute') NOT NULL DEFAULT 'user'
     );
   `);
 }
